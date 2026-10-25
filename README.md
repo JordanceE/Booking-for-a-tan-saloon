@@ -4,6 +4,8 @@
 
 A small, full-stack booking app for a tanning studio with one bed. Visitors choose a date, session length, and time, then reserve the session with their name and email. The studio publishes availability from **Manage studio**. No accounts are needed. Google Calendar checks and Gemini notes use optional server credentials; the core app runs without them.
 
+**New to the code?** Read the [step-by-step code guide](docs/code-guide.md) for the technologies, file map, request flow, database protection, integrations, and tests.
+
 ## Run locally
 
 Requires **Node.js 22.13+** (Node 24 works) and npm. Windows, macOS, and Linux are supported. No Cloudflare account or separate database server is needed for local development.

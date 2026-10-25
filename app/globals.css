@@ -6,6 +6,7 @@
   --line: #e8e7de;
   --olive: #3f4c36;
   --white: #fffefa;
+  --page-gutter: clamp(20px, 3.4vw, 88px);
 }
 * {
   box-sizing: border-box;
@@ -63,10 +64,10 @@ svg {
   border-bottom: 1px solid var(--line);
 }
 .header-inner {
-  max-width: 1240px;
+  width: 100%;
   height: 100%;
   margin: auto;
-  padding: 0 28px;
+  padding: 0 var(--page-gutter);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -125,10 +126,20 @@ svg {
   border-radius: 50%;
   display: inline-block;
 }
+.app-shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
 .app-shell main {
-  max-width: 1184px;
-  padding: 0 28px;
+  width: 100%;
+  flex: 1;
+  padding: 0 var(--page-gutter);
   margin: auto;
+}
+.app-shell > footer {
+  max-width: none;
+  margin-inline: var(--page-gutter);
 }
 .intro {
   min-height: 284px;
@@ -1112,22 +1123,211 @@ td:last-child {
   white-space: nowrap;
   border: 0;
 }
-@media (min-width: 1400px) {
+/* Let the desktop workspace grow with the window; retain the compact layouts below. */
+@media (min-width: 1051px) {
+  .site-header {
+    height: 100px;
+  }
+  .wordmark {
+    font-size: 36px;
+  }
+  .main-nav button {
+    font-size: 16px;
+  }
+  .header-note {
+    font-size: 13px;
+  }
   .intro {
-    padding-top: 58px;
-    padding-bottom: 47px;
+    min-height: 300px;
+    padding: 42px 0;
+    gap: 32px;
+  }
+  h1 {
+    font-size: clamp(60px, 4.6vw, 88px);
+    letter-spacing: -3px;
+  }
+  .eyebrow {
+    font-size: 11px;
+  }
+  .intro-copy {
+    font-size: 16px;
+    margin-top: 22px;
+  }
+  .sun-art {
+    flex-shrink: 0;
+    margin-right: clamp(12px, 3vw, 72px);
+    transform: scale(1.1);
+    transform-origin: right center;
   }
   .booking-heading {
-    margin-top: 20px;
+    margin: 16px 0 26px;
   }
-  .calendar-and-times {
-    min-height: 361px;
+  .booking-heading h2,
+  .management-heading h2 {
+    font-size: 32px;
   }
-  .date-grid {
-    row-gap: 7px;
+  .booking-heading p,
+  .management-heading p {
+    font-size: 15px;
+  }
+  .live-badge {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+  .booking-card {
+    grid-template-columns: clamp(280px, 22vw, 440px) minmax(0, 1fr);
+    border-radius: 20px;
+  }
+  .studio-panel {
+    padding: clamp(22px, 1.8vw, 40px);
   }
   .studio-visual {
-    height: 196px;
+    height: clamp(210px, 16vw, 320px);
+  }
+  .bed-arch {
+    left: calc(50% - 58px);
+    top: 27%;
+    width: 130px;
+    height: 210px;
+  }
+  .bed-base {
+    left: calc(50% - 86px);
+    width: 188px;
+  }
+  .bed-label,
+  .tiny-label {
+    font-size: 9px;
+  }
+  .studio-details {
+    padding-top: 28px;
+  }
+  .studio-details h3 {
+    font-size: 32px;
+    margin: 14px 0;
+  }
+  .studio-details > p,
+  .session-facts li {
+    font-size: 13px;
+  }
+  .studio-note p {
+    font-size: 12px;
+  }
+  .workspace-toolbar,
+  .booking-bottom {
+    padding: 24px clamp(24px, 2vw, 48px);
+  }
+  .chip {
+    min-height: 44px;
+    padding: 12px 17px;
+    font-size: 13px;
+  }
+  .layout-switch button {
+    min-width: 36px;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+  }
+  .calendar-and-times {
+    min-height: 430px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .calendar-panel,
+  .times-panel {
+    padding: 30px clamp(20px, 1.7vw, 42px);
+  }
+  .calendar-title h3,
+  .times-heading h3 {
+    font-size: 16px;
+  }
+  .icon-button {
+    width: 36px;
+    height: 36px;
+  }
+  .weekday-row span {
+    font-size: 12px;
+  }
+  .calendar-day {
+    height: clamp(36px, 3.2vw, 54px);
+    max-width: clamp(36px, 3.2vw, 54px);
+    font-size: 15px;
+  }
+  .date-grid {
+    row-gap: 8px;
+  }
+  .calendar-legend,
+  .timezone,
+  .times-panel > p,
+  .times-heading > span {
+    font-size: 11px;
+  }
+  .time-grid {
+    gap: 12px;
+    margin-top: 25px;
+  }
+  .time-slot {
+    min-height: 58px;
+    padding: 15px 12px;
+  }
+  .time-slot strong {
+    font-size: 15px;
+  }
+  .time-slot span {
+    font-size: 10px;
+  }
+  .selection-title,
+  .list-session {
+    font-size: 14px;
+  }
+  .booking-bottom .small,
+  .reassurance > span,
+  .availability-tag {
+    font-size: 12px;
+  }
+  .primary-button {
+    min-height: 50px;
+    padding: 15px 28px;
+    font-size: 14px;
+  }
+  .list-panel {
+    padding: 30px;
+    min-height: 430px;
+    max-height: 520px;
+  }
+  .list-heading h3,
+  .table-top h3 {
+    font-size: 17px;
+  }
+  .list-session {
+    min-height: 62px;
+    padding: 16px;
+  }
+  .empty-day h4 {
+    font-size: 25px;
+  }
+  .empty-day p {
+    font-size: 14px;
+    max-width: 300px;
+  }
+  .empty-day button,
+  .stats-row span,
+  .management-note {
+    font-size: 13px;
+  }
+  table {
+    font-size: 15px;
+  }
+  th {
+    font-size: 12px;
+  }
+  th,
+  td {
+    padding: 17px 28px;
+  }
+  .bottom-note p {
+    font-size: 24px;
+  }
+  footer {
+    font-size: 12px;
   }
 }
 @media (max-width: 1050px) {
@@ -1702,7 +1902,7 @@ td:last-child {
   min-width: 0;
 }
 .integration-cards h3 {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--ink);
   display: flex;
@@ -1711,7 +1911,7 @@ td:last-child {
   flex-wrap: wrap;
 }
 .integration-cards h3 span {
-  font-size: 8px;
+  font-size: 10px;
   color: var(--muted);
   font-weight: 400;
   border: 1px solid #dde3d1;
@@ -1719,7 +1919,7 @@ td:last-child {
   border-radius: 12px;
 }
 .integration-cards p {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
   margin-top: 8px;
@@ -1730,7 +1930,7 @@ td:last-child {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: 12px;
   color: #7d896c;
 }
 .confirmation-pending {
