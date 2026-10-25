@@ -29,7 +29,7 @@ Open the Local URL printed by the server, normally **http://127.0.0.1:5173**. Th
 - Server validation of dates, times, durations, names, and email addresses.
 - Atomic database protection against double bookings and overlapping availability for Bed 01.
 - Booked sessions stay visible as unavailable, with live refresh every 20 seconds and on window focus.
-- Confirmation screen and a downloadable `.ics` calendar event. No email is sent.
+- Confirmation screen with a prefilled Google Calendar link and a separate `.ics` download. The visitor reviews and saves the Google event; no email is sent.
 - Read-only Google Calendar FreeBusy integration marks conflicting slots unavailable and rechecks at booking time.
 - A receipt-protected Gemini endpoint generates a friendly note, caches it per booking, and safely falls back if the model is unavailable.
 - One explicitly labelled studio time zone: **UTC**, independent of the visitor's device.
@@ -97,7 +97,7 @@ npm run build
 npm run test:api
 ```
 
-`npm test` runs 31 deterministic tests against fake provider HTTP responses, real isolated SQLite databases, and the Cloudflare Worker runtime. Coverage includes RSA JWT verification, token refresh, overlap boundaries, fail-closed calendar errors, stale availability, Gemini failure cases, receipt authorization, concurrent bookings, generation caching, Worker-compatible HTTP requests, and rejecting redirects without forwarding credentials. It makes no external API calls.
+`npm test` runs 33 deterministic tests against fake provider HTTP responses, real isolated SQLite databases, and the Cloudflare Worker runtime. Coverage includes RSA JWT verification, token refresh, overlap boundaries, fail-closed calendar errors, stale availability, Gemini failure cases, receipt authorization, concurrent bookings, generation caching, Worker-compatible HTTP requests, rejecting redirects without forwarding credentials, and calendar links across UTC date boundaries without private booking data. It makes no external API calls.
 
 GitHub Actions runs type checking, these tests, the production build, migrations, and the HTTP API tests on pushes and pull requests. CI never receives Google credentials or makes live model calls.
 

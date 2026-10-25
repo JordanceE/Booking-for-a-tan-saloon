@@ -24,6 +24,8 @@ The private key must include its BEGIN/END lines. Keep it on one quoted line wit
 
 Only the Google Calendar **FreeBusy API** is called. Event titles, descriptions and attendees are neither read nor returned to visitors. The same calendar applies to the single studio bed.
 
+The booking confirmation has a separate **Add to Google Calendar** link. It opens the visitor's Google Calendar event editor with the session details prefilled; the visitor reviews and saves it. This does not need service-account write access. **Download calendar file (.ics)** remains available for other calendar apps. The app does not automatically add bookings to the studio's shared calendar.
+
 ## 3. Add free-tier Gemini confirmations
 
 1. Create a key in [Google AI Studio](https://aistudio.google.com/apikey).

@@ -37,21 +37,39 @@ export function parseStudioTime(date: string, time: string): number | null {
     : null;
 }
 
+const calendarTimestamp = (value: number) =>
+  new Date(value)
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}/, "");
+
+export function googleCalendarUrl(slot: Slot): string {
+  const url = new URL("https://calendar.google.com/calendar/render");
+  url.searchParams.set("action", "TEMPLATE");
+  url.searchParams.set("text", "Sunroom tanning session");
+  url.searchParams.set(
+    "dates",
+    `${calendarTimestamp(slot.startsAt)}/${calendarTimestamp(slot.startsAt + slot.duration * 60_000)}`,
+  );
+  url.searchParams.set("ctz", TIME_ZONE);
+  url.searchParams.set("location", "Sunroom Studio - Bed 01");
+  url.searchParams.set(
+    "details",
+    "Your Sunroom session. Please arrive 5 minutes before your appointment. Studio time: UTC.",
+  );
+  return url.toString();
+}
+
 export function calendarFile(slot: Slot): string {
-  const stamp = (value: number) =>
-    new Date(value)
-      .toISOString()
-      .replace(/[-:]/g, "")
-      .replace(/\.\d{3}/, "");
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Sunroom//Studio Booking//EN",
     "BEGIN:VEVENT",
     `UID:${slot.id}@sunroom.studio`,
-    `DTSTAMP:${stamp(Date.now())}`,
-    `DTSTART:${stamp(slot.startsAt)}`,
-    `DTEND:${stamp(slot.startsAt + slot.duration * 60_000)}`,
+    `DTSTAMP:${calendarTimestamp(Date.now())}`,
+    `DTSTART:${calendarTimestamp(slot.startsAt)}`,
+    `DTEND:${calendarTimestamp(slot.startsAt + slot.duration * 60_000)}`,
     "SUMMARY:Sunroom tanning session",
     "LOCATION:Sunroom Studio - Bed 01",
     "DESCRIPTION:Your Sunroom session. Please arrive 5 minutes before your appointment.",

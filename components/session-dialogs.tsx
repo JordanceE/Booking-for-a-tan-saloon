@@ -9,7 +9,7 @@ import {
   Plus,
   Sun,
 } from "lucide-react";
-import { dateKey, dayLabel, timeLabel, type Slot } from "@/lib/booking";
+import { dateKey, dayLabel, googleCalendarUrl, timeLabel, type Slot } from "@/lib/booking";
 import type { FormEvent } from "react";
 import Modal from "./modal";
 type Confirmation = {
@@ -139,12 +139,21 @@ export function ConfirmationDialog({
           <span>Arrive 5 minutes early. We'll take it from there.</span>
         </div>
       </div>
-      <button
+      <a
         className="primary-button full-width"
-        onClick={() => download(success.slot)}
+        href={googleCalendarUrl(success.slot)}
+        target="_blank"
+        rel="noopener noreferrer"
       >
-        <Download size={17} />
-        Add to my calendar
+        <CalendarDays size={17} />
+        Add to Google Calendar
+      </a>
+      <p className="form-hint">
+        Opens Google Calendar with your session filled in. Review the details and save your event.
+      </p>
+      <button className="text-button" onClick={() => download(success.slot)}>
+        <Download size={14} />
+        Download calendar file (.ics)
       </button>
       <button className="text-button" onClick={() => setSuccess(null)}>
         Back to Sunroom <ArrowRight size={14} />

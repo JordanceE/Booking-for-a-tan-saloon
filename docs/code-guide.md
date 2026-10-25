@@ -108,7 +108,7 @@ See [the integration setup guide](integrations.md) for credentials and live chec
 
 [`app/globals.css`](../app/globals.css) controls presentation. The page uses fluid side padding instead of a desktop width cap. CSS Grid divides the studio card, calendar, and time choices; `clamp()` lets sizes grow within readable bounds. Media queries stack the panels on narrower screens. Changing this stylesheet does not change booking rules.
 
-The `.ics` download is built in [`lib/booking.ts`](../lib/booking.ts) and downloaded in the browser. It does not send an email or write to Google Calendar.
+The confirmation's **Add to Google Calendar** link is built in [`lib/booking.ts`](../lib/booking.ts). It opens Google's event editor with the session title, UTC start/end times, location, and arrival note. The visitor chooses their calendar and saves the event. Guest contact details and booking receipts are excluded from the URL. A separate **Download calendar file (.ics)** option supports other calendar apps. Neither option automatically writes to the studio's shared calendar or sends an email.
 
 ## 6. Run and check it
 
@@ -117,7 +117,7 @@ Follow [the README](../README.md#run-locally) for setup. Useful checks:
 | Command | What it proves |
 | --- | --- |
 | `npm run typecheck` | TypeScript connections between modules are valid. |
-| `npm test` | 31 deterministic provider, SQLite, and Worker runtime tests cover concurrency, validation, receipt protection, HTTP compatibility, redirects, and failure behavior. No live API calls. |
+| `npm test` | 33 deterministic provider, SQLite, calendar-link, and Worker runtime tests cover concurrency, validation, receipt protection, HTTP compatibility, redirects, UTC date boundaries, and failure behavior. No live API calls. |
 | `npm run build` | The frontend and Worker compile into a production deployment. |
 | `npm run test:api` | With the local server running, real HTTP requests exercise publishing, booking races, and confirmation caching. It refuses remote targets. |
 | `npm run test:live` | Optional real Google/Gemini calls using local credentials. Missing credentials mean skipped tests, not verified integrations. |

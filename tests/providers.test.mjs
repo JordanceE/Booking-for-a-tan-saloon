@@ -18,6 +18,7 @@ import {
   STANDARD_CONFIRMATION,
 } from "../lib/integrations/gemini.ts";
 import { reply, abortingFetch } from "./support/fixtures.mjs";
+import { googleCalendarUrl, calendarFile } from "../lib/booking.ts";
 
 const pair = await generateKeyPair("RS256", { extractable: true });
 const credentials = {
@@ -34,6 +35,43 @@ const note =
   "Your Sunroom session is reserved. We look forward to welcoming you!";
 const geminiBody = (text = note, finishReason = "STOP") => ({
   candidates: [{ finishReason, content: { parts: [{ text }] } }],
+});
+
+test("Google Calendar links preserve UTC session times across midnight and exclude private booking data", () => {
+  const slot = {
+    id: "private-slot-id",
+    startsAt: Date.parse("2026-12-31T23:50:00Z"),
+    duration: 20,
+    booked: true,
+    guestName: "Private Guest",
+    guestEmail: "private@example.invalid",
+    confirmationToken: "private-receipt",
+  };
+  const url = new URL(googleCalendarUrl(slot));
+  assert.equal(url.origin, "https://calendar.google.com");
+  assert.equal(url.pathname, "/calendar/render");
+  assert.equal(url.searchParams.get("action"), "TEMPLATE");
+  assert.equal(url.searchParams.get("dates"), "20261231T235000Z/20270101T001000Z");
+  assert.equal(url.searchParams.get("ctz"), "UTC");
+  assert.equal(url.searchParams.get("text"), "Sunroom tanning session");
+  assert.equal(url.searchParams.get("location"), "Sunroom Studio - Bed 01");
+  assert.match(url.searchParams.get("details"), /5 minutes/);
+  assert.equal(decodeURIComponent(url.toString()).includes("private"), false);
+});
+
+test("downloadable calendar fallback keeps the same session dates as the Google link", () => {
+  const slot = {
+    id: "export-test",
+    startsAt: Date.parse("2027-01-31T23:45:00Z"),
+    duration: 30,
+    booked: true,
+  };
+  const [start, end] = new URL(googleCalendarUrl(slot)).searchParams.get("dates").split("/");
+  const file = calendarFile(slot);
+  assert.equal(start, "20270131T234500Z");
+  assert.equal(end, "20270201T001500Z");
+  assert.ok(file.includes(`DTSTART:${start}\r\n`));
+  assert.ok(file.includes(`DTEND:${end}\r\n`));
 });
 
 test("configuration distinguishes disabled, partial and complete calendar credentials without exposing secrets", () => {
