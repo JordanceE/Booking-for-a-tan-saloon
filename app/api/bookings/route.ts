@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { ApiError, body, database, handle, json } from "@/lib/api";
+import { body, database, handle, json } from "@/lib/api";
+import { reserveSlot } from "@/lib/reservations";
+import { providers } from "@/lib/integrations/runtime";
 export async function POST(request: Request) {
   return handle(async () => {
     const data = await body(
@@ -20,27 +22,6 @@ export async function POST(request: Request) {
         })
         .strict(),
     );
-    const now = Date.now();
-    // Only the first caller can change this row from unbooked to booked.
-    const slot = await database()
-      .prepare(
-        `UPDATE slots SET booked_at = ?, guest_name = ?, guest_email = ?
-      WHERE id = ? AND booked_at IS NULL AND starts_at > ?
-      RETURNING id, starts_at AS startsAt, duration`,
-      )
-      .bind(now, data.name, data.email.toLowerCase(), data.slotId, now)
-      .first();
-    if (!slot)
-      throw new ApiError(
-        409,
-        "This session is no longer available. Please choose another time.",
-      );
-    return json(
-      {
-        slot: { ...slot, booked: true },
-        message: `You're booked, ${data.name.split(" ")[0]}! We look forward to seeing you at Sunroom.`,
-      },
-      201,
-    );
+    return json(await reserveSlot(database(), providers().calendar, data), 201);
   });
 }

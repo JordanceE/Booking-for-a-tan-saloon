@@ -32,6 +32,7 @@ import {
   dateKey,
   dayLabel,
   timeLabel,
+  isAvailable,
   type Slot,
 } from "@/lib/booking";
 
@@ -64,6 +65,7 @@ export default function Sunroom() {
   const [success, setSuccess] = useState<{
     slot: Slot;
     message: string;
+    confirmationPending?: boolean;
   } | null>(null);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -76,7 +78,7 @@ export default function Sunroom() {
     setSlots(data.slots);
     setError("");
     if (!initialized.current) {
-      const first = data.slots.find((s) => !s.booked) ?? data.slots[0];
+      const first = data.slots.find(isAvailable) ?? data.slots[0];
       if (first) {
         setDay(dateKey(first.startsAt));
         setMonth(
@@ -127,7 +129,7 @@ export default function Sunroom() {
 
   const matching = slots.filter((s) => !duration || s.duration === duration);
   const selectedIsAvailable =
-    selected && slots.some((s) => s.id === selected.id && !s.booked);
+    selected && slots.some((s) => s.id === selected.id && isAvailable(s));
   const today = dateKey(Date.now());
   function chooseDay(value: string) {
     setDay(value);
@@ -151,21 +153,55 @@ export default function Sunroom() {
     setBusy(true);
     setFormError("");
     try {
-      const result = await request<{ slot: Slot; message: string }>(
-        "/api/bookings",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            slotId: booking.id,
-            name: data.get("name"),
-            email: data.get("email"),
-          }),
-        },
-      );
+      const result = await request<{
+        slot: Slot;
+        message: string;
+        confirmationToken: string;
+      }>("/api/bookings", {
+        method: "POST",
+        body: JSON.stringify({
+          slotId: booking.id,
+          name: data.get("name"),
+          email: data.get("email"),
+        }),
+      });
       setSlots((current) =>
         current.map((s) => (s.id === result.slot.id ? result.slot : s)),
       );
-      setSuccess(result);
+      setSuccess({
+        slot: result.slot,
+        message: result.message,
+        confirmationPending: true,
+      });
+      // Booking is already saved. AI failure must not turn it into a failed booking.
+      void request<{ message: string; source: "gemini" | "fallback" }>(
+        "/api/confirmations",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            slotId: result.slot.id,
+            token: result.confirmationToken,
+          }),
+        },
+      )
+        .then((note) =>
+          setSuccess((current) =>
+            current?.slot.id === result.slot.id
+              ? {
+                  ...current,
+                  message: note.message,
+                  confirmationPending: false,
+                }
+              : current,
+          ),
+        )
+        .catch(() =>
+          setSuccess((current) =>
+            current?.slot.id === result.slot.id
+              ? { ...current, confirmationPending: false }
+              : current,
+          ),
+        );
       setBooking(null);
       setSelected(null);
       void load().catch(() => {});

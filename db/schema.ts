@@ -16,6 +16,10 @@ export const slots = sqliteTable(
     bookedAt: integer("booked_at"),
     guestName: text("guest_name"),
     guestEmail: text("guest_email"),
+    confirmationTokenHash: text("confirmation_token_hash"),
+    confirmationMessage: text("confirmation_message"),
+    confirmationSource: text("confirmation_source"),
+    confirmationState: text("confirmation_state"),
   },
   (table) => [
     index("slots_start_idx").on(table.startsAt),

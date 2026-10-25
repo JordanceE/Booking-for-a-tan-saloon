@@ -7,7 +7,14 @@ import {
   Globe2,
   Sun,
 } from "lucide-react";
-import { dateKey, dayLabel, timeLabel, type Slot } from "@/lib/booking";
+import {
+  dateKey,
+  dayLabel,
+  timeLabel,
+  isAvailable,
+  slotStatus,
+  type Slot,
+} from "@/lib/booking";
 import type { Dispatch, SetStateAction } from "react";
 interface Props {
   month: Date;
@@ -51,7 +58,7 @@ export default function BookingCalendar({
         ),
     );
   }
-  const available = matching.filter((s) => !s.booked);
+  const available = matching.filter(isAvailable);
   const daySlots = matching.filter((s) => dateKey(s.startsAt) === day);
   return (
     <div className="calendar-and-times">
@@ -122,7 +129,7 @@ export default function BookingCalendar({
       <div className="times-panel">
         <div className="times-heading">
           <h3>{dayLabel(Date.parse(day), true)}</h3>
-          <span>{daySlots.filter((s) => !s.booked).length} available</span>
+          <span>{daySlots.filter(isAvailable).length} available</span>
         </div>
         <p className="small muted">Choose a time that feels right.</p>
         {daySlots.length ? (
@@ -131,13 +138,15 @@ export default function BookingCalendar({
               <button
                 className={`time-slot ${selected?.id === s.id ? "chosen" : ""}`}
                 key={s.id}
-                disabled={s.booked}
+                disabled={!isAvailable(s)}
                 aria-pressed={selected?.id === s.id}
                 onClick={() => setSelected(s)}
               >
                 <strong>{timeLabel(s.startsAt)}</strong>
-                <span>{s.booked ? "Booked" : `${s.duration} min`}</span>
-                {selected?.id === s.id && !s.booked && <Check size={14} />}
+                <span>
+                  {isAvailable(s) ? `${s.duration} min` : slotStatus(s)}
+                </span>
+                {selected?.id === s.id && isAvailable(s) && <Check size={14} />}
               </button>
             ))}
           </div>

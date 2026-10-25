@@ -1,14 +1,7 @@
 import { env } from "cloudflare:workers";
 import { z } from "zod";
-
-export class ApiError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
+import { ApiError } from "./errors.ts";
+export { ApiError } from "./errors.ts";
 export function database() {
   if (!env.DB)
     throw new ApiError(

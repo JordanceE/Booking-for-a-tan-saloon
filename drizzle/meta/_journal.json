@@ -8,6 +8,13 @@
       "when": 1792873459904,
       "tag": "0000_ambitious_roulette",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792923807769,
+      "tag": "0001_wet_starbolt",
+      "breakpoints": true
     }
   ]
 }

@@ -12,7 +12,11 @@ import {
 import { dateKey, dayLabel, timeLabel, type Slot } from "@/lib/booking";
 import type { FormEvent } from "react";
 import Modal from "./modal";
-type Confirmation = { slot: Slot; message: string };
+type Confirmation = {
+  slot: Slot;
+  message: string;
+  confirmationPending?: boolean;
+};
 export function BookingDialog({
   booking,
   busy,
@@ -118,6 +122,11 @@ export function ConfirmationDialog({
         <Check size={31} />
       </div>
       <p className="success-message">{success.message}</p>
+      {success.confirmationPending && (
+        <p className="confirmation-pending" role="status">
+          Preparing your studio note…
+        </p>
+      )}
       <div className="booking-summary">
         <CalendarDays size={25} />
         <div>

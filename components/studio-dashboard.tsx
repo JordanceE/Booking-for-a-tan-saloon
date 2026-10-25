@@ -8,7 +8,14 @@ import {
   Sun,
   Trash2,
 } from "lucide-react";
-import { dayLabel, timeLabel, type Slot } from "@/lib/booking";
+import {
+  dayLabel,
+  timeLabel,
+  isAvailable,
+  slotStatus,
+  type Slot,
+} from "@/lib/booking";
+import IntegrationStatus from "./integration-status";
 interface Props {
   slots: Slot[];
   loading: boolean;
@@ -46,7 +53,7 @@ export default function StudioDashboard({
       <div className="stats-row">
         <div>
           <span>Available sessions</span>
-          <strong>{slots.filter((s) => !s.booked).length}</strong>
+          <strong>{slots.filter(isAvailable).length}</strong>
           <Sun size={25} />
         </div>
         <div>
@@ -60,6 +67,7 @@ export default function StudioDashboard({
           <Leaf size={25} />
         </div>
       </div>
+      <IntegrationStatus />
       <div className="schedule-table">
         <div className="table-top">
           <h3>Upcoming availability</h3>
@@ -100,9 +108,9 @@ export default function StudioDashboard({
                     <td>{s.duration} minutes</td>
                     <td>
                       <span
-                        className={`availability-tag ${s.booked ? "is-booked" : ""}`}
+                        className={`availability-tag ${!isAvailable(s) ? "is-booked" : ""}`}
                       >
-                        {s.booked ? "Booked" : "Available"}
+                        {slotStatus(s)}
                       </span>
                     </td>
                     <td>

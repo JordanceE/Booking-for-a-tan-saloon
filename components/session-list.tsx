@@ -1,6 +1,13 @@
 "use client";
 import { CalendarDays, Sun } from "lucide-react";
-import { dateKey, dayLabel, timeLabel, type Slot } from "@/lib/booking";
+import {
+  dateKey,
+  dayLabel,
+  timeLabel,
+  isAvailable,
+  slotStatus,
+  type Slot,
+} from "@/lib/booking";
 interface Props {
   matching: Slot[];
   selected: Slot | null;
@@ -24,7 +31,7 @@ export default function SessionList({
           <button
             key={s.id}
             className={`list-session ${selected?.id === s.id ? "chosen" : ""}`}
-            disabled={s.booked}
+            disabled={!isAvailable(s)}
             onClick={() => {
               setSelected(s);
               setDay(dateKey(s.startsAt));
@@ -36,8 +43,10 @@ export default function SessionList({
             </span>
             <strong>{timeLabel(s.startsAt)}</strong>
             <span>{s.duration} min</span>
-            <span className={`availability-tag ${s.booked ? "is-booked" : ""}`}>
-              {s.booked ? "Booked" : "Available"}
+            <span
+              className={`availability-tag ${!isAvailable(s) ? "is-booked" : ""}`}
+            >
+              {slotStatus(s)}
             </span>
           </button>
         ))

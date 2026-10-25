@@ -1,20 +1,13 @@
 import { z } from "zod";
 import { ApiError, body, database, handle, json } from "@/lib/api";
 import { parseStudioTime } from "@/lib/booking";
+import { listSlots } from "@/lib/reservations";
+import { providers } from "@/lib/integrations/runtime";
 export const dynamic = "force-dynamic";
 export async function GET() {
   return handle(async () => {
-    const result = await database()
-      .prepare(
-        "SELECT id, starts_at AS startsAt, duration, booked_at IS NOT NULL AS booked FROM slots WHERE starts_at > ? ORDER BY starts_at",
-      )
-      .bind(Date.now())
-      .all();
     return json({
-      slots: result.results.map((row) => ({
-        ...row,
-        booked: Boolean(row.booked),
-      })),
+      slots: await listSlots(database(), providers().calendar),
       timeZone: "UTC",
     });
   });

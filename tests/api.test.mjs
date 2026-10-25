@@ -83,10 +83,39 @@ test("API flow: publish, validate, handle races, retain booking and protect pers
   assert.equal(booked.booked, true);
   assert.deepEqual(
     Object.keys(booked).sort(),
-    ["booked", "duration", "id", "startsAt"].sort(),
+    ["booked", "duration", "id", "startsAt", "calendarBlocked"].sort(),
   );
   assert.equal(JSON.stringify(read.body).includes("@example.com"), false);
   assert.equal((await call(`/api/slots/${slot.id}`, "DELETE")).status, 409);
+  const receipt = bookingRace.find((r) => r.status === 201).body
+    .confirmationToken;
+  assert.match(receipt, /^[a-f0-9]{64}$/);
+  assert.equal(
+    (
+      await call("/api/confirmations", "POST", {
+        slotId: slot.id,
+        token: "0".repeat(64),
+      })
+    ).status,
+    403,
+  );
+  const notes = await Promise.all(
+    Array.from({ length: 5 }, () =>
+      call("/api/confirmations", "POST", { slotId: slot.id, token: receipt }),
+    ),
+  );
+  assert.ok(notes.every((r) => r.status === 200 || r.status === 202));
+  const savedNote = await call("/api/confirmations", "POST", {
+    slotId: slot.id,
+    token: receipt,
+  });
+  assert.equal(savedNote.status, 200);
+  assert.ok(["gemini", "fallback"].includes(savedNote.body.source));
+  assert.ok(savedNote.body.message.length > 10);
+  assert.equal(
+    JSON.stringify((await call("/api/slots")).body).includes(receipt),
+    false,
+  );
 
   assert.equal(
     (

@@ -1,0 +1,7 @@
+# Copy to .dev.vars. Keep the real file out of Git.
+# Share the calendar with this service account (free/busy access is enough).
+GOOGLE_CALENDAR_ID=""
+GOOGLE_SERVICE_ACCOUNT_EMAIL=""
+GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY=""
+# Use a Google AI Studio project on the Free tier, without billing enabled.
+GEMINI_API_KEY=""

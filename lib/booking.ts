@@ -4,7 +4,12 @@ export type Slot = {
   startsAt: number;
   duration: number;
   booked: boolean;
+  calendarBlocked?: boolean;
 };
+export const isAvailable = (slot: Slot) =>
+  !slot.booked && !slot.calendarBlocked;
+export const slotStatus = (slot: Slot) =>
+  slot.booked ? "Booked" : slot.calendarBlocked ? "Calendar busy" : "Available";
 export const TIME_ZONE = "UTC";
 export const dateKey = (value: number | Date) =>
   new Date(value).toISOString().slice(0, 10);
