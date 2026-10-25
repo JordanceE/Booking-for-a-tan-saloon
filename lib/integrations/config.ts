@@ -1,3 +1,5 @@
+export const GEMINI_MODEL = "gemini-3.5-flash-lite";
+
 export interface IntegrationEnv {
   GOOGLE_CALENDAR_ID?: string;
   GOOGLE_SERVICE_ACCOUNT_EMAIL?: string;
@@ -24,6 +26,6 @@ export function integrationStatus(env: IntegrationEnv) {
     ai: env.GEMINI_API_KEY?.trim()
       ? ("configured" as const)
       : ("not_configured" as const),
-    model: "gemini-2.5-flash-lite",
+    model: GEMINI_MODEL,
   };
 }

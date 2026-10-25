@@ -82,7 +82,7 @@ The interval rule is `existingStart < newEnd && existingEnd > newStart`. A sessi
 
 5. Only one competing request can change the row. The others receive **409 Conflict**. Disabling a button helps the user; this SQL condition provides the actual protection.
 6. The response includes the saved slot, a standard confirmation message, and a random receipt token. Only the token's SHA-256 hash is stored in D1.
-7. The browser immediately shows success and starts a separate confirmation request. Other visitors see the slot as booked on their next refresh.
+7. The browser immediately shows success and starts a separate confirmation request for the chat panel beside the session. Other visitors see the slot as booked on their next refresh.
 
 ## 4. Follow the optional integrations
 
@@ -96,7 +96,7 @@ The service account must have free/busy access to the studio calendar. There is 
 
 The browser calls `POST /api/confirmations` with `{ slotId, token }`. [`lib/confirmations.ts`](../lib/confirmations.ts) checks the receipt hash and atomically claims the generation attempt before calling [`gemini.ts`](../lib/integrations/gemini.ts).
 
-Gemini receives a fixed generic prompt, without the guest's name, email, booking time, or calendar details. A valid result is saved to D1. Repeated requests return the saved note, and simultaneous requests cannot start extra model calls. Missing credentials, timeouts, quota errors, or invalid output produce a standard friendly message. The reservation remains saved. An interrupted attempt can remain pending with that standard message; the app deliberately avoids automatic repeated model calls.
+Gemini receives a fixed generic prompt, without the guest's name, email, booking time, or calendar details. The model is `gemini-3.5-flash-lite`, with a free tier; its name is shared between configuration status and the HTTP client. A valid result is saved to D1. Repeated requests return the saved note, and simultaneous requests cannot start extra model calls. The frontend keeps the response's `source` so the chat bubble attributes generated notes to Gemini and labels fallbacks as studio notes. Missing credentials, timeouts, quota errors, or invalid output produce a standard friendly message. The reservation remains saved. An interrupted attempt can remain pending with that standard message; the app deliberately avoids automatic repeated model calls.
 
 See [the integration setup guide](integrations.md) for credentials and live checks. Credentials belong in ignored `.dev.vars` locally and secret runtime variables when hosted; they are never sent to the frontend. A **Configured** label reports configuration presence, not proof that the credentials work.
 

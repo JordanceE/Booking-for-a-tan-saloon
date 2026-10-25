@@ -1951,3 +1951,132 @@ td:last-child {
     font-size: 11px;
   }
 }
+
+/* Booking confirmation chat */
+.modal.confirmation-modal {
+  max-width: 900px;
+}
+.confirmation-layout {
+  display: grid;
+  gap: 28px;
+  margin-top: 24px;
+}
+.confirmation-details {
+  min-width: 0;
+}
+.confirmation-details .success-icon {
+  margin-top: 4px;
+}
+.confirmation-details .form-hint {
+  font-size: 11px;
+  text-align: center;
+}
+.confirmation-chat {
+  min-width: 0;
+  border: 1px solid #dfe5d4;
+  border-radius: 16px;
+  background: #f0f3e8;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+}
+.assistant-header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.assistant-avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 14px;
+  background: #e0e8d2;
+  color: #64764d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.assistant-header h3 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.assistant-header p {
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.assistant-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 22px;
+  font-size: 10px;
+  color: #697d50;
+}
+.assistant-conversation {
+  flex: 1;
+  padding-top: 12px;
+}
+.assistant-message {
+  padding: 18px;
+  border: 1px solid #e3e7d9;
+  background: var(--white);
+  border-radius: 3px 14px 14px 14px;
+  box-shadow: 0 3px 12px #3f4c3605;
+}
+.assistant-source {
+  display: block;
+  color: #8c967d;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.assistant-message p {
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.assistant-footer {
+  border-top: 1px solid #dfe5d4;
+  color: #869278;
+  padding-top: 14px;
+  margin-top: 24px;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.assistant-typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 14px 12px;
+}
+.assistant-typing span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9aa98b;
+  animation: assistant-pulse 1.2s ease-in-out infinite;
+}
+.assistant-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.assistant-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes assistant-pulse {
+  50% { opacity: 0.35; transform: translateY(-2px); }
+}
+@media (min-width: 760px) {
+  .confirmation-layout {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+}
+@media (max-width: 540px) {
+  .modal.confirmation-modal {
+    padding: 28px 22px;
+  }
+  .confirmation-chat {
+    padding: 18px;
+  }
+}

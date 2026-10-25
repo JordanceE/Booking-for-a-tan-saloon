@@ -31,7 +31,7 @@ Open the Local URL printed by the server, normally **http://127.0.0.1:5173**. Th
 - Booked sessions stay visible as unavailable, with live refresh every 20 seconds and on window focus.
 - Confirmation screen with a prefilled Google Calendar link and a separate `.ics` download. The visitor reviews and saves the Google event; no email is sent.
 - Read-only Google Calendar FreeBusy integration marks conflicting slots unavailable and rechecks at booking time.
-- A receipt-protected Gemini endpoint generates a friendly note, caches it per booking, and safely falls back if the model is unavailable.
+- A receipt-protected Gemini endpoint generates a friendly note in a chat panel beside the booking confirmation, caches it per booking, and clearly labels the standard fallback if the model is unavailable. The panel stacks below the session on phones.
 - One explicitly labelled studio time zone: **UTC**, independent of the visitor's device.
 
 ## Connect Google Calendar and Gemini
@@ -117,7 +117,7 @@ Source is published at [JordanceE/Booking-for-a-tan-saloon](https://github.com/J
 
 ## AI tools used
 
-Built with **OpenAI Codex** and the **Sites** starter/workflow. Codex assisted with the interface, TypeScript implementation, SQL race-condition handling, documentation, and checks. No other coding assistants were used. The confirmation endpoint calls `gemini-2.5-flash-lite`, which has a [free tier](https://ai.google.dev/gemini-api/docs/pricing). Use an unbilled AI Studio project to avoid charges. The model is never needed to reserve a slot, and no paid-only fallback model is used.
+Built with **OpenAI Codex** and the **Sites** starter/workflow. Codex assisted with the interface, TypeScript implementation, SQL race-condition handling, documentation, and checks. No other coding assistants were used. The confirmation endpoint calls `gemini-3.5-flash-lite`, which has a [free tier](https://ai.google.dev/gemini-api/docs/pricing). Use an unbilled AI Studio project to avoid charges. The model is never needed to reserve a slot, and no paid-only fallback model is used.
 
 ## With more time
 

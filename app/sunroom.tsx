@@ -66,6 +66,7 @@ export default function Sunroom() {
     slot: Slot;
     message: string;
     confirmationPending?: boolean;
+    confirmationSource?: "gemini" | "fallback";
   } | null>(null);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -174,6 +175,7 @@ export default function Sunroom() {
         slot: result.slot,
         message: result.message,
         confirmationPending: true,
+        confirmationSource: "fallback",
       });
       // Booking is already saved. AI failure must not turn it into a failed booking.
       void request<{ message: string; source: "gemini" | "fallback" }>(
@@ -192,6 +194,7 @@ export default function Sunroom() {
               ? {
                   ...current,
                   message: note.message,
+                  confirmationSource: note.source,
                   confirmationPending: false,
                 }
               : current,

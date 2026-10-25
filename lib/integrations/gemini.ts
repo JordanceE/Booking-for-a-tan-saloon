@@ -1,8 +1,8 @@
 import { z } from "zod";
-import type { IntegrationEnv } from "./config.ts";
+import { GEMINI_MODEL, type IntegrationEnv } from "./config.ts";
 import { providerJson, type ProviderOptions } from "./http.ts";
 
-export const GEMINI_MODEL = "gemini-2.5-flash-lite";
+export { GEMINI_MODEL } from "./config.ts";
 export const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 export const STANDARD_CONFIRMATION =
   "Your Sunroom session is reserved. We look forward to welcoming you!";
@@ -72,7 +72,7 @@ export function createAi(
                 generationConfig: { temperature: 0.5, maxOutputTokens: 120 },
               }),
             },
-            options.timeoutMs ?? 4000,
+            options.timeoutMs ?? 12_000,
           ),
         );
         const candidate = response.candidates[0];

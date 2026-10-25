@@ -32,7 +32,7 @@ The booking confirmation has a separate **Add to Google Calendar** link. It open
 2. Use a project on the **Free** tier with no paid billing enabled. The app never upgrades a project or falls back to a paid-only model. Google's current model availability and quotas apply.
 3. Add `GEMINI_API_KEY="your-key"` to `.dev.vars`.
 
-The app uses `gemini-2.5-flash-lite`, which has a [free tier](https://ai.google.dev/gemini-api/docs/pricing). No guest name, email, booking date, or Google event information is sent to Gemini. The model receives a fixed request to write a short studio confirmation.
+The app uses `gemini-3.5-flash-lite`, which has a [free tier](https://ai.google.dev/gemini-api/docs/pricing). The earlier 2.5 model may be unavailable to new projects. No guest name, email, booking date, or Google event information is sent to Gemini. The model receives a fixed request to write a short studio confirmation.
 
 ## 4. Apply and verify
 
@@ -40,7 +40,7 @@ Restart the local server after editing `.dev.vars`. Open **Manage studio** to ch
 
 Create an event marked **Busy** in the studio calendar that overlaps a published slot. Refresh Sunroom: the slot should be marked **Calendar busy** and disabled. A booking request also rechecks Google immediately before reservation. Events that only touch a slot's start or end do not overlap.
 
-Make a booking at a free time. The confirmation opens immediately with the standard note, then updates after the backend calls Gemini. The protected `POST /api/confirmations` response reports `source: "gemini"` when generation succeeds and `source: "fallback"` otherwise. Each booking permits at most one generation attempt; retries return the saved result.
+Make a booking at a free time. The confirmation opens immediately with a chat panel beside the session details (below them on phones). It shows a typing indicator while the backend prepares the note, then labels the bubble **Gemini** when generation succeeds or **Studio note** for the standard fallback. Generation has a 12-second deadline and never delays saving the reservation. The protected `POST /api/confirmations` response reports `source: "gemini"` when generation succeeds and `source: "fallback"` otherwise. Each booking permits at most one generation attempt; retries return the saved result.
 
 For hosting, configure the same four values as **secret runtime environment variables** in Sites and redeploy the saved app version. If working with Codex, fill the ignored local file and say it is ready; Codex can transfer the named values without printing them. Never share the downloaded key or API key in a public repository.
 

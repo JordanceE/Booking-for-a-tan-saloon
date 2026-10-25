@@ -7,6 +7,7 @@ import {
   Download,
   LoaderCircle,
   Plus,
+  Sparkles,
   Sun,
 } from "lucide-react";
 import { dateKey, dayLabel, googleCalendarUrl, timeLabel, type Slot } from "@/lib/booking";
@@ -16,6 +17,7 @@ type Confirmation = {
   slot: Slot;
   message: string;
   confirmationPending?: boolean;
+  confirmationSource?: "gemini" | "fallback";
 };
 export function BookingDialog({
   booking,
@@ -117,47 +119,76 @@ export function ConfirmationDialog({
   download: (slot: Slot) => void;
 }) {
   return (
-    <Modal title="Hello, sunshine." onClose={() => setSuccess(null)}>
-      <div className="success-icon">
-        <Check size={31} />
+    <Modal title="Hello, sunshine." className="confirmation-modal" onClose={() => setSuccess(null)}>
+      <div className="confirmation-layout">
+        <section className="confirmation-details" aria-label="Your confirmed session">
+          <div className="success-icon">
+            <Check size={31} />
+          </div>
+          <p className="success-message">Your time is reserved, just for you.</p>
+          <div className="booking-summary">
+            <CalendarDays size={25} />
+            <div>
+              <strong>{dayLabel(success.slot.startsAt)}</strong>
+              <span>
+                {timeLabel(success.slot.startsAt)}–
+                {timeLabel(success.slot.startsAt + success.slot.duration * 60_000)}{" "}
+                UTC · Bed 01
+              </span>
+              <span>Arrive 5 minutes early. We'll take it from there.</span>
+            </div>
+          </div>
+          <a
+            className="primary-button full-width"
+            href={googleCalendarUrl(success.slot)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <CalendarDays size={17} />
+            Add to Google Calendar
+          </a>
+          <p className="form-hint">
+            Opens Google Calendar with your session filled in. Review the details and save your event.
+          </p>
+          <button className="text-button" onClick={() => download(success.slot)}>
+            <Download size={14} />
+            Download calendar file (.ics)
+          </button>
+          <button className="text-button" onClick={() => setSuccess(null)}>
+            Back to Sunroom <ArrowRight size={14} />
+          </button>
+        </section>
+        <aside className="confirmation-chat" aria-label="Booking confirmation chat">
+          <div className="assistant-header">
+            <span className="assistant-avatar"><Sparkles size={21} strokeWidth={1.5} /></span>
+            <div>
+              <h3>Sunroom assistant</h3>
+              <p>A little welcome, just for you.</p>
+            </div>
+          </div>
+          <div className="assistant-status"><Check size={13} /> Booking confirmed</div>
+          <div className="assistant-conversation" role="log" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
+            <div className="assistant-message">
+              <span className="assistant-source">
+                {success.confirmationPending ? "Preparing your note" : success.confirmationSource === "gemini" ? "Gemini" : "Studio note"}
+              </span>
+              <p>{success.message}</p>
+            </div>
+            {success.confirmationPending && (
+              <div className="assistant-typing" role="status" aria-label="Preparing your Gemini confirmation">
+                <span /><span /><span />
+              </div>
+            )}
+          </div>
+          <p className="assistant-footer">
+            {success.confirmationPending
+              ? "Your session is saved. Your note is on its way."
+              : success.confirmationSource === "gemini"
+                ? "A warm welcome, written with Gemini."
+                : "A standard studio confirmation. Your session is saved."}
+          </p>
+        </aside>
       </div>
-      <p className="success-message">{success.message}</p>
-      {success.confirmationPending && (
-        <p className="confirmation-pending" role="status">
-          Preparing your studio note…
-        </p>
-      )}
-      <div className="booking-summary">
-        <CalendarDays size={25} />
-        <div>
-          <strong>{dayLabel(success.slot.startsAt)}</strong>
-          <span>
-            {timeLabel(success.slot.startsAt)}–
-            {timeLabel(success.slot.startsAt + success.slot.duration * 60_000)}{" "}
-            UTC · Bed 01
-          </span>
-          <span>Arrive 5 minutes early. We'll take it from there.</span>
-        </div>
-      </div>
-      <a
-        className="primary-button full-width"
-        href={googleCalendarUrl(success.slot)}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <CalendarDays size={17} />
-        Add to Google Calendar
-      </a>
-      <p className="form-hint">
-        Opens Google Calendar with your session filled in. Review the details and save your event.
-      </p>
-      <button className="text-button" onClick={() => download(success.slot)}>
-        <Download size={14} />
-        Download calendar file (.ics)
-      </button>
-      <button className="text-button" onClick={() => setSuccess(null)}>
-        Back to Sunroom <ArrowRight size={14} />
-      </button>
     </Modal>
   );
 }

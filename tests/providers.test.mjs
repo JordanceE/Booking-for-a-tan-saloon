@@ -251,6 +251,10 @@ test("Gemini endpoint uses a fixed private prompt, authenticates in a header, an
       fetch: async (url, init) => {
         calls++;
         assert.equal(url, GEMINI_URL);
+        assert.equal(
+          url,
+          `https://generativelanguage.googleapis.com/v1beta/models/${integrationStatus({}).model}:generateContent`,
+        );
         assert.equal(url.includes("test-secret"), false);
         assert.equal(init.headers["x-goog-api-key"], "test-secret");
         const body = JSON.parse(init.body);
