@@ -97,13 +97,15 @@ npm run build
 npm run test:api
 ```
 
-`npm test` runs 29 deterministic tests against fake provider HTTP responses and real isolated SQLite databases, including RSA JWT verification, token refresh, overlap boundaries, fail-closed calendar errors, stale availability, Gemini failure cases, receipt authorization, concurrent bookings, and generation caching. It makes no external API calls.
+`npm test` runs 31 deterministic tests against fake provider HTTP responses, real isolated SQLite databases, and the Cloudflare Worker runtime. Coverage includes RSA JWT verification, token refresh, overlap boundaries, fail-closed calendar errors, stale availability, Gemini failure cases, receipt authorization, concurrent bookings, generation caching, Worker-compatible HTTP requests, and rejecting redirects without forwarding credentials. It makes no external API calls.
 
 GitHub Actions runs type checking, these tests, the production build, migrations, and the HTTP API tests on pushes and pull requests. CI never receives Google credentials or makes live model calls.
 
 `npm run test:live` separately calls the real Google APIs using `.dev.vars`. Missing credentials are reported as **skipped**, not verified. Use a Free-tier AI Studio project; the Gemini live test makes one model request. See [the guide](docs/integrations.md) for a real busy-event check.
 
 The HTTP integration test creates local test records (including one permanent sample booking per run). It refuses non-local URLs. It checks invalid input, overlapping slots, five simultaneous publishing requests, eight simultaneous booking requests (one succeeds, seven receive 409), booked-slot deletion protection, and absence of contact details in public responses.
+
+If `GET /api/slots` fails, the HTTP test stops with the status and availability error before creating test records. A selected slot cannot enable Continue while availability cannot be verified. Check the error banner and retry after resolving the Calendar or database connection.
 
 Manual browser checks cover publishing, selecting a session, booking, the disabled booked state, the confirmation screen, and the calendar download. Availability persists on disk, rather than in React state or localStorage.
 

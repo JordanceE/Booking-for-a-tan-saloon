@@ -21,7 +21,8 @@ export async function providerJson(
     const response = await fetcher(url, {
       ...init,
       signal: controller.signal,
-      redirect: "error",
+      // Workers supports manual/follow only. Reject 3xx below without forwarding credentials.
+      redirect: "manual",
     });
     if (!response.ok) throw new Error("Provider request failed");
     return await response.json();

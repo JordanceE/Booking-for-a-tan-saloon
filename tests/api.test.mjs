@@ -14,10 +14,22 @@ async function call(path, method = "GET", body) {
   });
   return { status: response.status, body: await response.json() };
 }
+async function readSlots() {
+  const result = await call("/api/slots");
+  assert.equal(
+    result.status,
+    200,
+    `GET /api/slots returned ${result.status}: ${result.body.error ?? "unexpected response"}. Resolve the availability error before testing bookings.`,
+  );
+  assert.ok(Array.isArray(result.body.slots), "Availability must contain a slots array");
+  return result.body;
+}
 const futureDate = (offset) =>
   new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
 
 test("API flow: publish, validate, handle races, retain booking and protect personal data", async () => {
+  // Fail clearly before writing test slots if Calendar or the database is unavailable.
+  await readSlots();
   // Find a free test time, even when this test has run before on the same local database.
   let created;
   for (let day = 30; day < 360; day++) {
@@ -40,7 +52,7 @@ test("API flow: publish, validate, handle races, retain booking and protect pers
   });
   assert.equal(invalid.status, 400);
   assert.equal(
-    (await call("/api/slots")).body.slots.find((s) => s.id === slot.id).booked,
+    (await readSlots()).slots.find((s) => s.id === slot.id).booked,
     false,
   );
 
@@ -78,14 +90,14 @@ test("API flow: publish, validate, handle races, retain booking and protect pers
     "Exactly one visitor gets the session",
   );
   assert.equal(bookingRace.filter((r) => r.status === 409).length, 7);
-  const read = await call("/api/slots");
-  const booked = read.body.slots.find((s) => s.id === slot.id);
+  const read = await readSlots();
+  const booked = read.slots.find((s) => s.id === slot.id);
   assert.equal(booked.booked, true);
   assert.deepEqual(
     Object.keys(booked).sort(),
     ["booked", "duration", "id", "startsAt", "calendarBlocked"].sort(),
   );
-  assert.equal(JSON.stringify(read.body).includes("@example.com"), false);
+  assert.equal(JSON.stringify(read).includes("@example.com"), false);
   assert.equal((await call(`/api/slots/${slot.id}`, "DELETE")).status, 409);
   const receipt = bookingRace.find((r) => r.status === 201).body
     .confirmationToken;
@@ -113,7 +125,7 @@ test("API flow: publish, validate, handle races, retain booking and protect pers
   assert.ok(["gemini", "fallback"].includes(savedNote.body.source));
   assert.ok(savedNote.body.message.length > 10);
   assert.equal(
-    JSON.stringify((await call("/api/slots")).body).includes(receipt),
+    JSON.stringify(await readSlots()).includes(receipt),
     false,
   );
 

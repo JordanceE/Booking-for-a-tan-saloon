@@ -107,9 +107,11 @@ export default function Sunroom() {
   useEffect(() => {
     const refresh = () => {
       if (!document.hidden)
-        void load().catch(() =>
+        void load().catch((error) =>
           setError(
-            "Availability could not be refreshed. Please retry before booking.",
+            error instanceof Error
+              ? error.message
+              : "Availability could not be refreshed. Please retry before booking.",
           ),
         );
     };
@@ -421,7 +423,9 @@ export default function Sunroom() {
                           {timeLabel(selected.startsAt)}
                         </span>
                         <span className="small muted">
-                          {selected.duration} minutes, just for you
+                          {error
+                            ? "Availability couldn't be verified. Retry above to continue."
+                            : `${selected.duration} minutes, just for you`}
                         </span>
                       </>
                     ) : (

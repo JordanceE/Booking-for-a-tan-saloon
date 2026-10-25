@@ -85,7 +85,7 @@ test("Google JWT is signed correctly, has the narrow scope, and shared token ref
     tokenCalls = 0,
     busyCalls = 0;
   const fetch = async (url, init) => {
-    assert.equal(init.redirect, "error");
+    assert.equal(init.redirect, "manual");
     if (url === GOOGLE_TOKEN_URL) {
       tokenCalls++;
       const form = new URLSearchParams(init.body);

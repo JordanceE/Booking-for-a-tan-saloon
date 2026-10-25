@@ -117,12 +117,14 @@ Follow [the README](../README.md#run-locally) for setup. Useful checks:
 | Command | What it proves |
 | --- | --- |
 | `npm run typecheck` | TypeScript connections between modules are valid. |
-| `npm test` | 29 deterministic provider and SQLite tests cover concurrency, validation, receipt protection, and failure behavior. No live API calls. |
+| `npm test` | 31 deterministic provider, SQLite, and Worker runtime tests cover concurrency, validation, receipt protection, HTTP compatibility, redirects, and failure behavior. No live API calls. |
 | `npm run build` | The frontend and Worker compile into a production deployment. |
 | `npm run test:api` | With the local server running, real HTTP requests exercise publishing, booking races, and confirmation caching. It refuses remote targets. |
 | `npm run test:live` | Optional real Google/Gemini calls using local credentials. Missing credentials mean skipped tests, not verified integrations. |
 
 [`tests/support/fixtures.mjs`](../tests/support/fixtures.mjs) applies the actual SQL migrations to isolated SQLite databases. Provider tests use controlled fake HTTP responses. [GitHub Actions](../.github/workflows/ci.yml) runs the deterministic checks, build, migrations, and HTTP tests automatically.
+
+[`tests/workers.test.mjs`](../tests/workers.test.mjs) runs the actual HTTP helper inside workerd with intercepted traffic. This catches runtime differences that a Node mock misses: Workers rejects `redirect: "error"`, so the helper uses `manual` and rejects non-success responses, including redirects. The HTTP API test checks availability before writing test records and reports a useful error if the server returns 503.
 
 ## 7. Explain deployment and the main tradeoff
 
